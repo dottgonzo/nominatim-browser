@@ -234,7 +234,7 @@ function createRequest<T>(path: string, data: Object = {}) {
 * @param resolve The promise resolver.
 * @param reject The promise rejecter.
 */
-function finishRequest<T>(request: Axios.IPromise<Axios.AxiosXHR<T>>) {
+function finishRequest<T>(request: Axios.IPromise<Axios.AxiosXHR<any>>) {
     // While it would be nicer to use Bluebird's Promise.resolve here rather than manually resolving and rejecting,
     // we would then lose the error message.
     return new Bluebird<T>((res, rej) => {
