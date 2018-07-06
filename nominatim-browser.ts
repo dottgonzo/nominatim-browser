@@ -322,11 +322,11 @@ export class NominatimGeocoder {
         
     }
 
-    reverse(query: [string, string]) {
+    reverse(query: [number, number]) {
         return reverseGeocode({
             nominatimUrl:this.url,
-            lat: query[0],
-            lon: query[1],
+            lat: query[0].toString(),
+            lon: query[1].toString(),
             addressdetails: true
         })
     }
