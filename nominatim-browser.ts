@@ -41,6 +41,21 @@ export interface Request {
      * operator and brand.
      */
     namedetails?: boolean;
+
+
+    /**
+     * Custom nominatim URL.
+     */
+
+    nominatimUrl?: string;
+
+    /**
+     * Custom params.
+     */
+
+
+    tokenParams?: string;
+
 }
 
 export interface BaseGeocodeRequest extends Request {
@@ -63,6 +78,7 @@ export interface BaseGeocodeRequest extends Request {
      * Output geometry of results as a WKT.
      */
     polygon_text?: boolean;
+
 }
 
 export interface GeocodeRequest extends BaseGeocodeRequest {
@@ -80,7 +96,6 @@ export interface GeocodeRequest extends BaseGeocodeRequest {
     country?: string;
 
     postalcode?: string;
-
     /**
      * Limit search results to the given 2-digit country codes.
      */
@@ -213,9 +228,15 @@ export interface NominatimResponse {
 /**
 Creates a webrequest to the given path.
 */
-function createRequest<T>(path: string, data: Object = {}) {
+function createRequest<T>(path: string, data: any) {
     //Result should be in JSON
     data["format"] = "json";
+
+    let url = 'https://nominatim.openstreetmap.org'
+    if (data.nominatimUrl) url = data.nominatimUrl
+
+    if (data.tokenParams) path = path + '?' + data.tokenParams
+
 
     const request = Axios({
         url: `https://nominatim.openstreetmap.org/${path}`,
@@ -279,4 +300,37 @@ export function reverseGeocode(data: ReverseGeocodeRequest) {
  */
 export function lookupAddress(data: LookupRequest) {
     return handleFullRequest<NominatimResponse[]>("lookup", data);
+}
+
+
+
+export class NominatimGeocoder {
+
+
+    url: string
+    additionalStaticParamsToUrl?: string
+
+    constructor(options?: { url?: string, additionalStaticParamsToUrl?: string }) {
+        this.url = 'https://nominatim.openstreetmap.org'
+        if (options && options.url) this.url = options.url
+        if (options && options.additionalStaticParamsToUrl) this.additionalStaticParamsToUrl = options.additionalStaticParamsToUrl
+
+    }
+
+    geocode(address: string) {
+        return geocode({nominatimUrl:this.url,q:address})
+        
+    }
+
+    reverse(query: [string, string]) {
+        return reverseGeocode({
+            nominatimUrl:this.url,
+            lat: query[0],
+            lon: query[1],
+            addressdetails: true
+        })
+    }
+
+
+
 }
