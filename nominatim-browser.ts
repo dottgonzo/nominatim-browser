@@ -54,7 +54,7 @@ export interface Request {
      */
 
 
-    tokenParams?: string;
+    additionalStaticParamsToUrl?: string;
 
 }
 
@@ -235,7 +235,7 @@ function createRequest<T>(path: string, data: any) {
     let url = 'https://nominatim.openstreetmap.org'
     if (data.nominatimUrl) url = data.nominatimUrl
 
-    if (data.tokenParams) path = path + '?' + data.tokenParams
+    if (data.additionalStaticParamsToUrl) path = path + '?' + data.additionalStaticParamsToUrl
 
 
     const request = Axios({
@@ -318,13 +318,14 @@ export class NominatimGeocoder {
     }
 
     geocode(address: string) {
-        return geocode({nominatimUrl:this.url,q:address})
+        return geocode({nominatimUrl:this.url,additionalStaticParamsToUrl:this.additionalStaticParamsToUrl,q:address})
         
     }
 
     reverse(query: [number, number]) {
         return reverseGeocode({
             nominatimUrl:this.url,
+            additionalStaticParamsToUrl:this.additionalStaticParamsToUrl,
             lat: query[0].toString(),
             lon: query[1].toString(),
             addressdetails: true

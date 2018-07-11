@@ -34,4 +34,3 @@ node_modules
 
 # Ignore built files
 tests/built/*
-dist/*
