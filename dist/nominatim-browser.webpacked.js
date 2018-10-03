@@ -81,7 +81,7 @@
 	    if (data.additionalStaticParamsToUrl)
 	        path = path + '?' + data.additionalStaticParamsToUrl;
 	    var request = Axios({
-	        url: "https://nominatim.openstreetmap.org/" + path,
+	        url: url + "/" + path,
 	        method: "GET",
 	        params: data,
 	        responseType: "json",

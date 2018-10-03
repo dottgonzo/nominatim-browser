@@ -239,7 +239,7 @@ function createRequest<T>(path: string, data: any) {
 
 
     const request = Axios({
-        url: `https://nominatim.openstreetmap.org/${path}`,
+        url: `${url}/${path}`,
         method: "GET",
         params: data,
         responseType: "json",
