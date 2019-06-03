@@ -11,7 +11,6 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Axios = require("axios");
-var Bluebird = require("bluebird");
 var NominatimError = /** @class */ (function (_super) {
     __extends(NominatimError, _super);
     function NominatimError(message, requestData) {
@@ -53,7 +52,7 @@ function createRequest(path, data) {
 function finishRequest(request) {
     // While it would be nicer to use Bluebird's Promise.resolve here rather than manually resolving and rejecting,
     // we would then lose the error message.
-    return new Bluebird(function (res, rej) {
+    return new Promise(function (res, rej) {
         request.then(function (resp) {
             if (resp.status > 205 || resp.status < 200) {
                 return rej(new NominatimError("Response for request did not indicate success. " + resp.status + " " + resp.statusText + ".", resp.data));

@@ -8,7 +8,10 @@
     "build": "./node_modules/.bin/tsc -p . && npm run webpack",
     "webpack": "./node_modules/.bin/webpack ./dist/nominatim-browser.js ./dist/nominatim-browser.webpacked.js",
     "test": "npm run build && ./node_modules/.bin/alsatian dist/tests/*.js",
-    "watch-ts": "./node_modules/.bin/tsc -w"
+    "watch-ts": "./node_modules/.bin/tsc -w",
+    "release:patch": "npm version patch && git push && git push --tags",
+    "release:minor": "npm version minor && git push && git push --tags",
+    "release:major": "npm version major && git push && git push --tags"
   },
   "repository": {
     "type": "git",
@@ -27,8 +30,7 @@
   },
   "homepage": "https://github.com/nozzlegear/nominatim-browser#readme",
   "dependencies": {
-    "axios": "^0.15.3",
-    "bluebird": "^3.3.5"
+    "axios": "^0.15.3"
   },
   "devDependencies": {
     "@types/axios": "^0.9.34",

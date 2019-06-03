@@ -1,5 +1,4 @@
-import * as Axios from "axios";
-import * as Bluebird from "bluebird";
+import * as Axios from "axios"
 
 export class NominatimError extends Error {
     constructor(message: string, public requestData) {
@@ -258,7 +257,7 @@ function createRequest<T>(path: string, data: any) {
 function finishRequest<T>(request: Axios.IPromise<Axios.AxiosXHR<any>>) {
     // While it would be nicer to use Bluebird's Promise.resolve here rather than manually resolving and rejecting,
     // we would then lose the error message.
-    return new Bluebird<T>((res, rej) => {
+    return new Promise<T>((res, rej) => {
         request.then((resp) => {
             if (resp.status > 205 || resp.status < 200) {
                 return rej(new NominatimError(`Response for request did not indicate success. ${resp.status} ${resp.statusText}.`, resp.data));

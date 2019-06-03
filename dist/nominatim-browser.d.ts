@@ -1,4 +1,3 @@
-import * as Bluebird from "bluebird";
 export declare class NominatimError extends Error {
     requestData: any;
     constructor(message: string, requestData: any);
@@ -168,15 +167,15 @@ export interface NominatimResponse {
 /**
  * Lookup the latitude and longitude data for a given address.
  */
-export declare function geocode(data: GeocodeRequest): Bluebird<NominatimResponse[]>;
+export declare function geocode(data: GeocodeRequest): Promise<NominatimResponse[]>;
 /**
  * Lookup the address data for a pair of latitude and longitude coordinates.
  */
-export declare function reverseGeocode(data: ReverseGeocodeRequest): Bluebird<NominatimResponse>;
+export declare function reverseGeocode(data: ReverseGeocodeRequest): Promise<NominatimResponse>;
 /**
  * Lookup the address of one or multiple OSM objects like node, way or relation.
  */
-export declare function lookupAddress(data: LookupRequest): Bluebird<NominatimResponse[]>;
+export declare function lookupAddress(data: LookupRequest): Promise<NominatimResponse[]>;
 export declare class NominatimGeocoder {
     url: string;
     additionalStaticParamsToUrl?: string;
@@ -184,6 +183,6 @@ export declare class NominatimGeocoder {
         url?: string;
         additionalStaticParamsToUrl?: string;
     });
-    geocode(address: string): Bluebird<NominatimResponse[]>;
-    reverse(query: [number, number]): Bluebird<NominatimResponse>;
+    geocode(address: string): Promise<NominatimResponse[]>;
+    reverse(query: [number, number]): Promise<NominatimResponse>;
 }
