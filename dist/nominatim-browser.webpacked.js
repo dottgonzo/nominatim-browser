@@ -79,13 +79,16 @@
 	        url = data.nominatimUrl;
 	    if (data.additionalStaticParamsToUrl)
 	        path = path + '?' + data.additionalStaticParamsToUrl;
-	    var request = Axios({
-	        url: url + "/" + path,
-	        method: "GET",
-	        params: data,
-	        responseType: "json",
-	    });
-	    return request;
+		var reqConfig = {
+			url: url + "/" + path,
+			method: "GET",
+			params: data,
+			responseType: "json"
+		};
+		if (data.timeout)
+			reqConfig.timeout = data.timeout;
+		var request = Axios(reqConfig);
+		return request;
 	}
 	;
 	/**
@@ -149,16 +152,17 @@
 	        if (options && options.additionalStaticParamsToUrl)
 	            this.additionalStaticParamsToUrl = options.additionalStaticParamsToUrl;
 	    }
-	    NominatimGeocoder.prototype.geocode = function (address) {
-	        return geocode({ nominatimUrl: this.url, additionalStaticParamsToUrl: this.additionalStaticParamsToUrl, q: address });
+	    NominatimGeocoder.prototype.geocode = function (address, timeout) {
+	        return geocode({ timeout: timeout, nominatimUrl: this.url, additionalStaticParamsToUrl: this.additionalStaticParamsToUrl, q: address });
 	    };
-	    NominatimGeocoder.prototype.reverse = function (query) {
+	    NominatimGeocoder.prototype.reverse = function (query, timeout) {
 	        return reverseGeocode({
 	            nominatimUrl: this.url,
 	            additionalStaticParamsToUrl: this.additionalStaticParamsToUrl,
 	            lat: query[0].toString(),
 	            lon: query[1].toString(),
-	            addressdetails: true
+				addressdetails: true,
+				timeout: timeout
 	        });
 	    };
 	    return NominatimGeocoder;
