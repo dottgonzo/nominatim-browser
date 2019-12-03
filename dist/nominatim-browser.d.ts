@@ -164,18 +164,26 @@ export interface NominatimResponse {
     type: string;
     extratags: any;
 }
+export declare type RequestData = {
+    nominatimUrl?: string;
+    additionalStaticParamsToUrl?: string;
+    /**
+     * In milliseconds
+     */
+    timeout?: number;
+};
 /**
  * Lookup the latitude and longitude data for a given address.
  */
-export declare function geocode(data: GeocodeRequest): Promise<NominatimResponse[]>;
+export declare function geocode(data: GeocodeRequest & RequestData): Promise<NominatimResponse[]>;
 /**
  * Lookup the address data for a pair of latitude and longitude coordinates.
  */
-export declare function reverseGeocode(data: ReverseGeocodeRequest): Promise<NominatimResponse>;
+export declare function reverseGeocode(data: ReverseGeocodeRequest & RequestData): Promise<NominatimResponse>;
 /**
  * Lookup the address of one or multiple OSM objects like node, way or relation.
  */
-export declare function lookupAddress(data: LookupRequest): Promise<NominatimResponse[]>;
+export declare function lookupAddress(data: LookupRequest & RequestData): Promise<NominatimResponse[]>;
 export declare class NominatimGeocoder {
     url: string;
     additionalStaticParamsToUrl?: string;
@@ -183,6 +191,6 @@ export declare class NominatimGeocoder {
         url?: string;
         additionalStaticParamsToUrl?: string;
     });
-    geocode(address: string): Promise<NominatimResponse[]>;
-    reverse(query: [number, number]): Promise<NominatimResponse>;
+    geocode(address: string, timeout?: number): Promise<NominatimResponse[]>;
+    reverse(query: [number, number], timeout?: number): Promise<NominatimResponse>;
 }

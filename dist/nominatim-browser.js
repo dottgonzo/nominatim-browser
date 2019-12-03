@@ -1,8 +1,11 @@
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -33,12 +36,15 @@ function createRequest(path, data) {
         url = data.nominatimUrl;
     if (data.additionalStaticParamsToUrl)
         path = path + '?' + data.additionalStaticParamsToUrl;
-    var request = Axios({
+    var reqConfig = {
         url: url + "/" + path,
         method: "GET",
         params: data,
-        responseType: "json",
-    });
+        responseType: "json"
+    };
+    if (data.timeout)
+        reqConfig.timeout = data.timeout;
+    var request = Axios(reqConfig);
     return request;
 }
 ;
@@ -103,16 +109,17 @@ var NominatimGeocoder = /** @class */ (function () {
         if (options && options.additionalStaticParamsToUrl)
             this.additionalStaticParamsToUrl = options.additionalStaticParamsToUrl;
     }
-    NominatimGeocoder.prototype.geocode = function (address) {
-        return geocode({ nominatimUrl: this.url, additionalStaticParamsToUrl: this.additionalStaticParamsToUrl, q: address });
+    NominatimGeocoder.prototype.geocode = function (address, timeout) {
+        return geocode({ nominatimUrl: this.url, additionalStaticParamsToUrl: this.additionalStaticParamsToUrl, q: address, timeout: timeout });
     };
-    NominatimGeocoder.prototype.reverse = function (query) {
+    NominatimGeocoder.prototype.reverse = function (query, timeout) {
         return reverseGeocode({
             nominatimUrl: this.url,
             additionalStaticParamsToUrl: this.additionalStaticParamsToUrl,
             lat: query[0].toString(),
             lon: query[1].toString(),
-            addressdetails: true
+            addressdetails: true,
+            timeout: timeout
         });
     };
     return NominatimGeocoder;

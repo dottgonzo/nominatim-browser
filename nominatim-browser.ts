@@ -224,10 +224,20 @@ export interface NominatimResponse {
     extratags: any;
 }
 
+export type RequestData = {
+    nominatimUrl?: string
+    additionalStaticParamsToUrl?: string
+
+    /**
+     * In milliseconds
+     */
+    timeout?: number
+}
+
 /**
 Creates a webrequest to the given path.
 */
-function createRequest<T>(path: string, data: any) {
+function createRequest(path: string, data: (ReverseGeocodeRequest | GeocodeRequest | LookupRequest) & RequestData) {
     //Result should be in JSON
     data["format"] = "json";
 
@@ -237,13 +247,16 @@ function createRequest<T>(path: string, data: any) {
     if (data.additionalStaticParamsToUrl) path = path + '?' + data.additionalStaticParamsToUrl
 
 
-    const request = Axios({
+    const reqConfig: Axios.AxiosXHRConfig<unknown> = {
         url: `${url}/${path}`,
         method: "GET",
         params: data,
-        responseType: "json",
-    });
+        responseType: "json"
+    }
 
+    if (data.timeout) reqConfig.timeout = data.timeout
+
+    const request = Axios(reqConfig);
     return request;
 };
 
@@ -274,30 +287,29 @@ function finishRequest<T>(request: Axios.IPromise<Axios.AxiosXHR<any>>) {
  * @param path The request's path.
  * @param data The request's optional querystring or body data object.
  */
-function handleFullRequest<T>(path: string, data?: any) {
+function handleFullRequest<T>(path: string, data?: (ReverseGeocodeRequest | GeocodeRequest | LookupRequest) & RequestData) {
     var request = createRequest(path, data);
-
     return finishRequest<T>(request);
 };
 
 /**
  * Lookup the latitude and longitude data for a given address.
  */
-export function geocode(data: GeocodeRequest) {
+export function geocode(data: GeocodeRequest & RequestData) {
     return handleFullRequest<NominatimResponse[]>("search", data);
 }
 
 /**
  * Lookup the address data for a pair of latitude and longitude coordinates.
  */
-export function reverseGeocode(data: ReverseGeocodeRequest) {
+export function reverseGeocode(data: ReverseGeocodeRequest & RequestData) {
     return handleFullRequest<NominatimResponse>("reverse", data);
 }
 
 /**
  * Lookup the address of one or multiple OSM objects like node, way or relation. 
  */
-export function lookupAddress(data: LookupRequest) {
+export function lookupAddress(data: LookupRequest & RequestData) {
     return handleFullRequest<NominatimResponse[]>("lookup", data);
 }
 
@@ -316,18 +328,19 @@ export class NominatimGeocoder {
 
     }
 
-    geocode(address: string) {
-        return geocode({nominatimUrl:this.url,additionalStaticParamsToUrl:this.additionalStaticParamsToUrl,q:address})
+    geocode(address: string, timeout?: number) {
+        return geocode({nominatimUrl:this.url,additionalStaticParamsToUrl:this.additionalStaticParamsToUrl,q:address,timeout})
         
     }
 
-    reverse(query: [number, number]) {
+    reverse(query: [number, number], timeout?: number) {
         return reverseGeocode({
             nominatimUrl:this.url,
             additionalStaticParamsToUrl:this.additionalStaticParamsToUrl,
             lat: query[0].toString(),
             lon: query[1].toString(),
-            addressdetails: true
+            addressdetails: true,
+            timeout
         })
     }
 
